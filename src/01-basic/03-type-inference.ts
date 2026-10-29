@@ -136,6 +136,16 @@ console.log(showStatusMessage("error"));   // Something went wrong
 // Here, We created a reusable type called 'UIStatus'. 
 // Now we can use it wherever we need to represent the UI's state.
 
+
+// 'type' can represent a union directly:
+
+type UserStatus = "Active" | "Inactive" | "Suspended";
+
+let ustatus: UserStatus = "Active";
+
+ustatus = "Inactive";  // Valid
+// ustatus = "Pending"; // Type error
+
 // ======================
 // TypeScript 'any' type
 // ======================

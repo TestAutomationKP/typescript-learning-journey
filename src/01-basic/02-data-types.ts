@@ -75,7 +75,7 @@ console.log(selectedItem); // undefined
 selectItem("Laptop");
 console.log(selectedItem); // Laptop
 
-// ======== Undefined - object property missing========
+// ======== Undefined - object property missing ========
 
 type User = {
     name: string,
@@ -149,6 +149,7 @@ console.log(profilePicture); // null
 // This is useful especially when a user can add, change, or remove something.
 
 // ========== null vs undefined ===========
+
 // Example: updating a profile
 
 type ProfileUpdate = {
