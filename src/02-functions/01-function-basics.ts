@@ -219,6 +219,10 @@ const square = function(n: number): number{
     return n * n;
 }
 
+// Why is it called an anonymous function?
+
+// Because the function doesn't have its own name.
+
 */
 
 // Anonymous Arrow function expression
