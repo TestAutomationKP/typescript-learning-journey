@@ -1,6 +1,6 @@
 // ======= Type-inference =======
 
-// Here, we will learn how TypeScript automatically figures out the type of variable without explicitly writing it.
+// Here, we will learn how TypeScript automatically figures out the 'type of variable' without explicitly writing it.
 
 let username = "KP";
 let age = 34;
@@ -10,10 +10,13 @@ console.log(username);
 console.log(age);
 console.log(isStudent);
 
-//=================================================================
-// It is also commonly described as implicit typing, because we didn't explicitly write the types.
-//=================================================================
+console.log(typeof username); // "string"
+console.log(typeof age);      // "number"
+console.log(typeof isStudent); // boolean
 
+/*
+It is also commonly described as implicit typing, because we didn't explicitly write the types.
+*/
 
 // What happen if we assign a different type?
 
@@ -65,16 +68,13 @@ fruits.push("Grapes"); // Allowed
 let city = "Gurugram";
 city = "Delhi";
 city = "Mumbai";
-
 // 'let' variables can be reassigned, so TypeScript generally infers a broader type
 
 const country = "India";
 // country = "Japan"; // Error: cannot reassign a const
-
 // 'const' variables can not be reassigned. So, TypeScript can preserve the exact value (For example here, "India") as a literal type
 
-
-// Data Type vs literal types in type inference
+// ======== Data Type vs literal types in type inference =======
 
 // Data types
 
@@ -83,7 +83,7 @@ let colour: string = "red";
 colour = "blue";
 colour = "white";
 colour = "green";
-colour = "123" // allowed because colour has type 'string' but it is NOT logical value
+colour = "123" // allowed because colour has type 'string' but it is NOT a logical value
 
 // Literal types
 
@@ -115,6 +115,7 @@ uiStatus = "processing";
 
 // Let's create a function that displays a different message depending on the state
 
+// string literal union type (Type aliases with union types)
 type UIStatus = "loading" | "success" | "error";
 
 function showStatusMessage(status: UIStatus): string {
@@ -136,9 +137,7 @@ console.log(showStatusMessage("error"));   // Something went wrong
 // Here, We created a reusable type called 'UIStatus'. 
 // Now we can use it wherever we need to represent the UI's state.
 
-
 // 'type' can represent a union directly:
-
 type UserStatus = "Active" | "Inactive" | "Suspended";
 
 let ustatus: UserStatus = "Active";
@@ -156,21 +155,25 @@ ustatus = "Inactive";  // Valid
 let value: any;
 
 value = 100;    // allowed
-value = true;   // allowed
-value = "Okay"; // allowed
+console.log(value); // 100
 
-console.log(value);
+value = true;   // allowed
+console.log(value); // true
+
+value = "Okay"; // allowed
+console.log(value); // okay
+//console.log(value.toFixed(2)); // No compile error, but it failed at runtime as toFixed() is a number method
 
 let anotherValue: any = "Hello";
 console.log(anotherValue.toUpperCase()); // HELLO
 
 //console.log(anotherValue.toFixed(2)); 
 
-// NOTE: No TypeScript error, No warning showing here, because we have used 'any'. 
-// But it is failed at runtime because toFixed() is a number method
+// NOTE: No TypeScript error, No warning shown here, because we have used 'any'. 
+// But it failed at runtime because toFixed() is a number method.
 
 // =================================================================================
-// Note that to disable implicit typing for the 'any' type,                        ||
+// Note that, to disable implicit typing for the 'any' type,                       ||
 // you change the 'noImplicitAny' option in the 'tsconfig.json' file to 'true'.    || 
 //==================================================================================
 
@@ -185,18 +188,31 @@ console.log(result); // Excellent
 result = [12, 23, 24];
 console.log(result); // [12, 23, 24]
 
+// 'any' disables type-checking completely and risks runtime errors
+
 //========================
 // 'unknown' type
 //========================
 
+/*
+'unknown' is a type-safe counterpart to 'any' that represents a value whose type is not known upfront. 
+While you can assign any value to an 'unknown' variable, TypeScript prohibits(does not allow) performing operations, 
+accessing properties, or assigning it to a stricter type until you explicitly narrow or assert its type.
+*/
+
 let newValue: unknown = "Hello";
 
 newValue = 123;         // allowed
-newValue = false;       // allowed
-newValue = "New Value"; // allowed
+console.log(newValue);  // 123
+// console.log(newValue.toUpperCase()); // Error : 'newValue' is of type 'unknown'
 
+newValue = false;       // allowed
+console.log(newValue);  // false
+
+newValue = "New Value"; // allowed
 console.log(newValue); // New Value
-// How it is different from 'any' type?
+
+// How is it different from 'any' type?
 // Let's check
 
 //console.log(newValue.toUpperCase()); // TypeScript error
@@ -204,13 +220,22 @@ console.log(newValue); // New Value
 // Why????
 // because TypeScript does not know whether newValue is a string, number or boolean
 
-// correction: (How to use 'unknown' safely)
+// How to use 'unknown' safely
+
 let nextValue: unknown = "Hello";
 
-if(typeof(nextValue) === "string"){
+if(typeof nextValue === "string"){
     console.log(nextValue.toUpperCase()) //HELLO
 }
 
 // What happens here?
-// The typeof check tells TypeScript that value is a string inside the if block. 
+// The 'typeof' check tells TypeScript that value is a string inside the if block. 
 // This process is called type narrowing.
+
+/*
+- Unlike 'any', you cannot call methods, access properties, or perform mathematical operations directly 
+  on an 'unknown' value without triggering a compile-time error.
+- An 'unknown' value can only be assigned to variables of type 'unknown' or 'any'.
+- 'unknown' is the safer choice because it enforces validation before use, 
+   whereas 'any' disables type-checking completely and risks runtime errors.
+*/

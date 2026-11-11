@@ -31,6 +31,32 @@ type User = {
     age: number;
 };
 
+/*
+Understand it in this way !!!
+
+A TypeScript 'type alias' acts like a contract.
+If the contract says name and age are required, you have to provide them.
+
+User
+ |
+ |-- name -> string
+ |
+ |-- age -> number
+
+ Every object declared as User must satisfy that contract.
+
+*/
+
+//const user100: User = {}; // Note this : Error
+
+/* suppose you forget age, TypeScript reports error.
+
+const user5: User = {
+  name : "userFive",
+}
+
+*/
+
 // Reuse it
 const userOne: User = {
     name: "Ravi",
@@ -43,12 +69,55 @@ const userTwo: User = {
     age: 25,
 };
 
-// Now the structure is defined once and reused.
-// Think of User as a reusable description or contract for the shape of a user object. It does not create a runtime object or a new JavaScript class.
+/*
+ - Now the structure is defined once and reused.
+ - Think of User as a reusable description or contract for the shape of a user object. 
+ - It does not create a runtime object or a new JavaScript class.
+*/
+
+/*
+IMPORTANT:
+What happens to TypeScript at runtime?
+
+type User = {
+    name: string;
+    age: number;
+};
+
+- The type 'User' part does not exist at runtime.
+
+- TypeScript removes 'type' information when it compiles to JavaScript.
+
+- Conceptually, the generated JavaScript becomes:
+
+const userTwo = {
+    name: "Raju",
+    age: 25,
+};
+
+*/
 
 // ===== C. Type aliases with optional properties ======
 
 // You can combine type aliases with the 'optional properties' you learned earlier.
+
+// Define the structure
+type UserDemo = {
+    name?: string; // name property is optional
+    age?: number;  // age property is also optional
+};
+
+const user12: UserDemo = {};
+
+console.log(user12.name); // undefined
+console.log(user12.age);  // undefined
+
+/*
+
+Now TypeScript says:
+"Okay bro, name and age are optional. They don't have to be there."
+
+*/
 
 // define the product structure
 type Product = {
@@ -64,12 +133,21 @@ const product1: Product = {
   price: 1500,
 };
 
-const product2: Product = {
-  id: 2,
-  name: "Mouse",
-  price: 700,
-  description: "Wireless mouse",
-};
+console.log(product1.id);
+console.log(product1.name);
+console.log(product1.price);
+ 
+ const product2: Product = {
+   id: 2,
+   name: "Mouse",
+   price: 700,
+   description: "Wireless mouse",
+  };
+  
+console.log(product2.id);
+console.log(product2.name);
+console.log(product2.price);
+console.log(product2.description);
 
 // Both objects are valid because description is optional.
 
@@ -212,21 +290,52 @@ console.log(employee.address.city); // Gurugram
 
 // A type alias is not limited to objects. It can describe other kinds of types, too.
 
-// describe status structure
+// union of types
+type ID = string | number;
+
+// union of numbers
+type Dice = 1 | 2 | 3 | 4 | 5 | 6
+
+// A type alias can also be used to define a string literal union type.
+type Direction = "left" | "right";
+
+// describe 'status' as a string literal union type
 type Status = "pending" | "approved" | "rejected";
 
+/*
+Here:
+- Status                               → the type alias name
+- "pending", "approved" and "rejected" → string literal types
+- '|'                                  → union, meaning "one of these"
+*/
+
+/* Instead of define the object as 
+
+type Order = {
+  id: number;
+  status: "pending" | "approved" | "rejected";
+}
+
+*/
+
+// use it in object
 type Order = {
   id: number;
   status: Status;
 };
 
-const order: Order = {
+const orderOne: Order = {
   id: 1,
   status: "approved",
 };
 
+const orderTwo: Order = {
+  id: 2,
+  status: "pending",
+};
+
 // Error: "completed" isn't an allowed Status
-// order.status = "completed";
+// orderTwo.status = "completed";
 
 
 // This is useful when a property should accept only a specific set of values.
@@ -237,7 +346,7 @@ When should you use a type alias?
 Use type when you want to:
 
 - Reuse an object structure.
-- Define union types such as "success" | "error".
+- Define string literal union types such as "success" | "error".
 - Create function type names.
 - Compose complex types from simpler types.
 - Use 'type' when defining unions, intersections, function types, or other type expressions.
@@ -250,32 +359,57 @@ Answer: No, but (remember) we can declare the same 'interface' name more than on
 */
 
 // ====== Type aliases can combine/extend structures with intersections (&) ========
+
 type Person = {
   name: string;
 };
 
+const personOne: Person ={
+  name: "Alex"
+};
+
+// if your application needs a property 'salary', then define another type by extending the existing type
 type Worker = Person & {
   salary: number;
 };
+
+const workerOne: Worker = {
+    name: "Amit",
+    salary: 2400,
+};
+
+console.log(workerOne.name);
+console.log(workerOne.salary);
 
 type Employer = Worker & {
     businessType: string;
 };
 
-const worker: Worker = {
-    name: "Amit",
-    salary: 2400,
-};
-
-console.log(worker.name);
-console.log(worker.salary);
-
-const workerOne: Employer ={
+const employeOne: Employer ={
     name: "Ravi",
     salary: 15000,
     businessType: "textile",
 };
 
-console.log(workerOne.name);
-console.log(workerOne.salary);
-console.log(workerOne.businessType);
+console.log(employeOne.name);
+console.log(employeOne.salary);
+console.log(employeOne.businessType);
+
+
+// creating from existing type 'workerOne'
+const employeTwo: Employer = {
+  ...workerOne,
+  businessType: "software"
+};
+
+/*JavaScript:
+const employeTwo = Object.assign(Object.assign({}, workerOne), { businessType: "software" });
+*/
+
+console.log(employeTwo.name);
+console.log(employeTwo.salary);
+console.log(employeTwo.businessType);
+
+// This is an important TypeScript principle:
+
+// Don't add type annotations when TypeScript can clearly infer the type.

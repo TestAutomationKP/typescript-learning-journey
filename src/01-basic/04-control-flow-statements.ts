@@ -29,6 +29,28 @@ if(age >= 18){
 
 // output:You are a minor
 
+// TypeScript Ternary Operator
+
+/*
+
+The syntax of the ternary operator in TypeScript is:
+
+condition ? expression1 : expression2
+
+The ternary operator evaluates the test condition. If condition is
+
+    true - expression1 is executed.
+    false - expression2 is executed.
+*/
+
+let markSecured = 38;
+
+// Check the condition
+let result: string = (markSecured >= 40) ? "passed" : "failed";
+
+console.log(`You ${result} the exam.`);
+
+
 console.log("======if...else if .....else =======");
 
 let marks: number = 75;
@@ -159,7 +181,7 @@ for(const char of myName){
     console.log(char);
 }
 
-// ===== each iteration gives you one character from the string
+// Here, each iteration gives you one character from the string
 
 // For example, you could count the number of digits in a username:
 
@@ -174,11 +196,21 @@ for(const char of myName){
 
 console.log(`Total digits : ${digitCount}`);
 
-// ==== Set — process unique email addresses
+// ==== Set — process unique email addresses =====
 /*
 Real-world use: removing duplicates from user registrations or collecting unique tags.
 
 A 'Set' stores unique values. If you add the same value multiple times, it stores it only once.
+*/
+
+/* const emails = new Set([
+    "kp@abc.com",
+    "alex@xyz.com",
+    "smith@abc.com",
+    "alex@xyz.com",
+    "kp@abc.com"
+ ]);
+
 */
 
 const emails = new Set<string>([
@@ -201,6 +233,7 @@ smith@abc.com
 Observation: duplicate emails are automatically excluded.
 */
 
+// const permissions = new Set(["read", "write", "delete", "read"]); // JavaScript's runtime code
 const permissions = new Set<string>([
     "read",
     "write",
@@ -211,7 +244,13 @@ for (const permission of permissions) {
     console.log(`User has ${permission} permission`);
 }
 
-// ======= Map — process product prices
+// forEach method
+
+permissions.forEach((product) => {
+    console.log(product);
+});
+
+// ======= Map — process product prices ========
 /*
 Real-world use: shopping carts, product catalogs, and key-value data.
 A Map stores key-value pairs, such as product names and their prices.
@@ -251,7 +290,8 @@ Keyboard: ₹ 800
 Mouse: ₹ 500
 */
 
-// ==== Array of objects — process customer orders
+// ==== Array of objects — process customer orders =========
+
 // Real-world use: e-commerce applications, order management, and dashboards.
 // This is one of the most useful patterns in everyday TypeScript development.
 
@@ -308,6 +348,7 @@ Delhi
 Mumbai
 Bangalore
 */
+
 for(const index in cities){
     console.log(index);
 }
@@ -317,6 +358,7 @@ for(const index in cities){
 1
 2
 */
+
 // for...of vs for...in
 // Use 'for...of' when you want values. Use 'for...in' when you want enumerable property keys
 

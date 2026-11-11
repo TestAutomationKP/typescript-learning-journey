@@ -45,7 +45,7 @@ function multiply_1(a: number, b: number){
 console.log(multiply(4, 5));
 console.log(multiply_1(5, 6));
 
-// === The void return type ====
+// ==== The void return type ====
 
 // Sometimes a function performs an action but does not need to return a useful result.
 
@@ -59,7 +59,7 @@ function subtract(a: number, b: number): number{
     return a - b;
 }
 
-const subResult= subtract(23, 12);
+const subResult = subtract(23, 12);
 console.log(subResult); // 11
 
 function printSubtract(a: number, b: number): void{
@@ -71,12 +71,10 @@ const result_1 = printSubtract(23, 12);
 console.log(result_1); // 11 and also undefined
 
 /*
-
 - both examples produce the number 11 on the console, their behavior differs:
 - subtract() returns 11, allowing the caller to store or reuse it.
 - printSubtract() prints 11 itself; it doesn't return that number.
 - For a void function, the returned value at runtime is normally 'undefined' if no value is returned.
-
  */
 
 // === The 'never' return type ===
