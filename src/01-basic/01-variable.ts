@@ -105,13 +105,11 @@ if(true){
 // Another example
 
 let isLoggedIn: boolean = true;
-
 console.log(isLoggedIn) // true
 
 if(isLoggedIn){
     let msg = "Welcome back !";
     console.log(msg);       // scope of "msg" is within this 'if block' only.
-
     isLoggedIn = false;     // reassigning the OUTER variable 'isLoggedIn'  to 'false' inside the if block
 }
 
@@ -128,11 +126,9 @@ console.log(isLoggedIn);    // false (observe this !!!)
 
 let nameOne: string = "KP";
 console.log(nameOne); // KP
-
 {
     let nameOne: string = "KPP1"; // Completely a new variable
     console.log(nameOne); // KPP1
-
     nameOne = "KPP2"; // inner 'nameOne' gets updated with this re-assignment
 }
 
@@ -147,7 +143,7 @@ for (let i = 0; i < 3; i++) {
 // console.log(i); // Error
 
 /*
-- let is block-scoped. 
+- 'let' is block-scoped. 
 - If I declare another 'let variable' with the same name inside a nested block, it creates a separate variable. 
 - Changes to the inner variable do not affect the outer variable.
 */
@@ -230,6 +226,12 @@ a = 25;        // initialization
 console.log(a);
 
 // Note: 'let' allows you to declare the variable first and assign a value later.
+
+let x: number;
+//console.log(x); // Error: Variable 'x' is used before being assigned
+x = 20;
+console.log(x);
+
 
 // With 'const' — you must initialize immediately after declaration
 

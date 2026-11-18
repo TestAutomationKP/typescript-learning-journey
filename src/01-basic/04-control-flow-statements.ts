@@ -359,8 +359,19 @@ for(const index in cities){
 2
 */
 
+for(const index in cities){
+  console.log(cities[index]);
+}
+
+/*
+Delhi
+Mumbai
+Bangalore
+*/
+
 // for...of vs for...in
-// Use 'for...of' when you want values. Use 'for...in' when you want enumerable property keys
+//=============================
+// Use 'for...of' when you want values. Use 'for...in' when you want enumerable index/property keys
 
 // ==== Generator function — process data step by step
 /**
@@ -415,4 +426,35 @@ for(let i = 1; i <= 5; i++){
 5
 
 The number 3 is skipped, but the loop continues.
+*/
+
+/*
+In TypeScript, truthy and falsy values follow the exact same runtime rules as JavaScript because TypeScript compiles down to JavaScript. 
+Any value evaluated in a boolean context (like an if statement or ternary operator) is automatically force into either true or false.
+
+There are only eight 'falsy' values that evaluate to 'false' in boolean contexts.
+    • false. The boolean literal false itself.
+    • 0. The number zero.
+    • -0. Negative zero.
+    • 0n. BigInt zero.
+    • "", '', or  . Any empty string.
+    • null. The intentional absence of any value.
+    • undefined. An uninitialized or missing value.
+    • NaN. Not-a-Number
+
+All other values will be considered "truthy", meaning that when evaluated as a boolean expression, they will act as 'true'
+
+type Truthy = 
+true 
+| number 
+| string 
+| bigint 
+| object 
+| symbol
+
+Empty collections: Both empty arrays ([]) and empty objects ({}) evaluate to true
+Non-empty strings: Strings containing spaces (" ") or words like "false" and "0" are truthy.
+Non-zero numbers:  Negative numbers (-42) and decimals (0.5) evaluate to true.
+Objects and functions: All functions, dates, and class instances are truthy
+
 */

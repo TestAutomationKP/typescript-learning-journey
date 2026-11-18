@@ -10,6 +10,21 @@ Build a strong foundation in TypeScript through practical examples and projects.
 
 - Variables and type annotations
 - Primitive types
+- Type inference
+- Control Flow statements
+- Function basic
+- Function parameters
+- Function return types
+- Function optional default parameters
+- Object basic
+- Object types
+- Type alias
+- Interface
+- Arrays
+- Tuples
+- Union types
+- Literal types
+- Intersection types
 
 ## Practice
 

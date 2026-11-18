@@ -70,9 +70,9 @@ Q: What does !!value do?
 A: It converts a value to a Boolean
 
 (JavaScript Runtime)
-console.log(!!"hello");
-console.log(!!0);
-console.log(!!11);
+console.log(!!"hello"); // true
+console.log(!!0);       // false
+console.log(!!11);      // true
 
 */
 
@@ -124,7 +124,7 @@ let a: string | undefined;
             vs 
 let a: string | undefined = undefined;
 
-let a: string; // Notice that, just we have declared the variable 'a' of string type (not initialised)
+let a: string;  // Notice that, just we have declared the variable 'a' of string type (not initialised)
 console.log(a); // error
 
 Without '= undefined'
@@ -171,7 +171,7 @@ function greetY(name?: string){
 }
 
 // omit the argument: means call the function without parameter
-greetY();               // undefined
+greetY();               // undefined (function greetY(name?: string) means function greetY(name?: string | undefined): void)
 greetY("TypeScript");   // TypeScript
 
 // ======== Undefined - object property missing ========
@@ -207,14 +207,14 @@ const result = greet(); // Hi
 console.log(result);    // undefined
 
 /*
-- function print 'Hi', but does not return anything explicitly.
-- TypeScript infers result as void in this case. 
+- function prints 'Hi', but does not return anything explicitly.
+- TypeScript infers result as 'void' in this case. 
 - But at JavaScript runtime, a function that doesn't explicitly return anything, returns 'undefined'
 */
 
 // Check the return statement in the following example
 
-function getUserName():  string {
+function getUserName(): string {
     return "Alex";
 }
 
@@ -422,7 +422,7 @@ console.log(color); // red
 
 // Let's say, 'status' can only be either 'success', 'pending' or 'failed'
 
-let status: "success" | "pending" | "failed" = "success";
+let status: "success" | "pending" | "failed" = "success"; // Note: the variable 'status' is initialized with value "success"
 console.log(status);
 
 status = "pending";
@@ -432,18 +432,76 @@ console.log(status);
 
 /*
 let status = "success"; // fine
-
-status = "pending" // fine
+status = "pending"      // fine
 
 But,
 
-let status: "success" | "pending" | "failed";
-console.log(status); //Error: Variable 'uistatus' is used before being assigned.
-
-But, 
+let status: "success" | "pending" | "failed"; // Note: the variable 'status' is NOT initialized
+console.log(status);                          //Error: Variable 'status' is used before being assigned.
 
 */
 
+// ======== null/undefined fallback (nullish coalescing (??)) =====
+/*
+a ?? b means: 
+
+- use a if it is NOT null or undefined; 
+- otherwise use b.
+
+: value of 'a' exists            -> use 'a'
+: value of 'a' is null/undefined -> use 'b'
+
+*/
+
+const name: string | undefined = undefined;
+
+const person = name ?? "Guest";
+console.log(person); // Guest (Reason: Because name is undefined)
+
+const name1: string | undefined = "Alex";
+
+const person1 = name1 ?? "Guest";
+console.log(person1); // Alex (Because "Alex" is not null or undefined.)
+
+let username: string | null = null;
+console.log(username ?? "Guest"); // Guest (Reason: Because name is 'null')
+username = "KP";
+console.log(username ?? "Guest"); // KP
+
+let username1: string | null = "admin";
+console.log(username1 ?? "Guest"); // admin
+// remove the name
+username1 = null;
+console.log(username1 ?? "Guest"); // Guest (Because we set the value 'null')
+
+
+// Distinguishing ?? (nullish) from || (logical OR)
+
+const score = 0;
+
+console.log(score ?? 100); // 0. Why? Because 0 is not null or undefined
+
+console.log(score || 100); // 100. Why? Because || considers 0 to be falsy. It means false || true = true
+
+// Nullish Coalescing (??). Returns the right-hand fallback value(backup value) only when the left-hand side is null or undefined
+// Logical OR (||). Returns the fallback value(backup value) for any falsy value (including 0, "", and NaN).
+
+/*
+Comparison
+| Value             | value ?? 100      | value || 100 |
+|-------------------|------------------:|-------------:|
+| 10                | 10                | 10           |
+| 0                 | 0                 | 100          |
+| ""                | ""                | 100          |
+| false             | false             | 100          |
+| null              | 100               | 100          |
+| undefined         | 100               | 100          |
+
+
+?? → "Is it null or undefined?"
+|| → "Is it falsy?"
+
+*/
 /*
                  TYPESCRIPT
                      │
