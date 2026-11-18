@@ -1,5 +1,4 @@
 /*
-
 The main idea is that not every function parameter must be supplied by the caller.
 
 TypeScript gives us two common ways to handle this:
@@ -16,7 +15,6 @@ function greet(name: string): void{
 
 // call the function with parameter (The function requires a name argument.)
 greet("TypeScript"); // Hello, TypeScript
-
 // greet() // Error : Expected 1 argument, but got 0
 
 // ==== Optional parameters using ? =====
@@ -35,20 +33,41 @@ console.log(greetA("TypeScript")); // Hello, TypeScript!
 console.log(greetA());             // Hello, guest!
 
 // The ? means the caller is allowed to leave out the argument.
-// If the caller omits it, the parameter's value is undefined.
+// If the caller omits it, the parameter's value is 'undefined'.
 
 // What values can name have?
-// Inside this function, name can be a string or undefined.
+// Inside this function, name can be either a string or undefined.
+// function greetA(name?: string): string means function greetA(name?: string | undefined): string
 
-// conceptually ?: string is string | undefined
+function greetOne(name?: string) { // Optional parameter
+  return `Hello, ${name ?? "Stranger"}`;
+}
+
+console.log(greetOne()); // Hello, Stranger
+console.log(greetOne("TypeScript")); // Hello, TypeScript
+
+// null/undefined fallback (nullish coalescing (??))
+/*
+a ?? b means: 
+
+- use a if it is NOT null or undefined; 
+- otherwise use b.
+
+: value of 'a' exists            -> use 'a'
+: value of 'a' is null/undefined -> use 'b'
+
+'??' Returns the right-hand fallback value (backup value) only when the left-hand side is null or undefined
+
+*/
+
+//**************************************************
+// conceptually '?: string' is string | undefined  *
+//**************************************************
 
 // ===== Optional parameters with multiple arguments ====
 // A function that formats a person's full name.
 
-function getFullName(
-    firstName: string,
-    lastName?: string
-): string {
+function getFullName(firstName: string, lastName?: string): string {
     if (lastName !== undefined) {
         return `${firstName} ${lastName ?? ""}`;
     }
@@ -75,13 +94,13 @@ function describePerson(
 
 console.log(describePerson("KP", undefined, "Delhi")); // KP (no nickname) lives in Delhi.
 
-// ####### Default parameters using = #######
+// *********** Default parameters using = ************
 
 /*
- A default parameter supplies a fallback value when the caller 
+ A default parameter supplies a fallback(backup value) value when the caller 
  - omits the argument 
  or 
- - passes undefined.
+ - passes 'undefined'.
 */
 
 function greetB(name: string = "Guest"): string {
@@ -102,17 +121,13 @@ console.log(greetB("")); // Hello, ! // Note: An empty string is still a string,
 // NOTE: default parameters apply when an argument is omitted or is undefined, 
 // not simply when its value is empty or falsy.
 
-
 // ===== Optional vs. default parameters =====
 
 /*
-
 // Optional parameter: ?
 
 function greet(name?: string): string {
-    return name === undefined
-        ? "Hello, Guest!"
-        : `Hello, ${name}!`;
+    return name === undefined ? "Hello, Guest!" : `Hello, ${name}!`;
 }
 
 // The argument may be omitted. Its value is 'undefined' if omitted, so you handle that possibility in the function.
@@ -123,7 +138,6 @@ function greet(name?: string): string {
 function greet(name: string = "Guest"): string {
     return `Hello, ${name}!`;
 }
-
 
 // The argument may be omitted, and the function automatically substitutes "Guest".
 
@@ -158,6 +172,104 @@ console.log(calculatePrice(100, undefined , 0.2)); // 80
 
 // Passing 'undefined' tells TypeScript/JavaScript to use the default for quantity. i.e. 1
 
+// ======= Option Object (Best for multiple Optional Parameters)
+
+/*Instead of creating a function like this:
+
+function createUser(
+  name: string,
+  age?: number,
+  city?: string,
+  email?: string,
+  isActive?: boolean
+) {
+  // ...
+}
+
+you can pass one object containing multiple optional properties.
+
+*/ 
+
+interface UserOptions {
+  name: string;
+  age: number;
+  city?: string;
+  email?: string;
+  isActive?: boolean;
+}
+
+// Required properties: name and age
+// optional properties: city, email, isActive
+
+function createUser(options: UserOptions): void {
+  console.log(`Name: ${options.name}`);
+  console.log(`Age: ${options.age}`);
+  console.log(`City: ${options.city ?? "Not provided"}`);
+  console.log(`Email: ${options.email ?? "Not provided"}`);
+  console.log(`Active: ${options.isActive ?? true}`);
+}
+
+// Here: function createUser(options: UserOptions)
+// means: The function accepts one parameter called 'options', and that parameter must be an object matching the 'UserOptions' type.
+
+createUser({
+  name: "Rahul",
+  age: 20
+});
+
+createUser({
+  name: "Sarah",
+  age: 25,
+  city: "Mumbai",
+  email: "sarah@example.com",
+  isActive: false
+});
+
+// You can provide only the properties you need
+
+// This pattern is often called an 'options object' or 'parameter object pattern'. 
+// It's especially useful when a function has several optional parameters because the caller can specify values by name 
+// rather than relying on parameter position.
+
+interface UserOptionsV1 {
+  name?: string;
+  age?: number;
+  city?: string;
+  email?: string;
+  isActive?: boolean;
+}
+
+// The entire 'options' object is optional (= {})
+function createUserV1(options: UserOptionsV1 = {}): void {
+  console.log(`Name: ${options.name ?? "Guest"}`);
+  console.log(`Age: ${options.age ?? "Not provided"}`);
+  console.log(`City: ${options.city ?? "Not provided"}`);
+  console.log(`Email: ${options.email ?? "Not provided"}`);
+  console.log(`Active: ${options.isActive ?? true}`);
+}
+
+createUserV1({});
+/*
+Name: Guest
+Age: Not provided
+City: Not provided
+Email: Not provided
+Active: true
+*/
+
+createUserV1({
+  name: "Rahul",
+  age: 10
+});
+
+createUserV1({
+  name: "Sarah",
+  age: 25,
+  city: "Mumbai",
+  email: "sarah@example.com",
+  isActive: false
+});
+
 // ========== Practical advice ==========
 
 // If a function has many optional or default settings and you frequently need to skip earlier arguments, 
@@ -168,10 +280,8 @@ type ProfileOptions = {
     city?: string;
 };
 
-function createProfile(
-    name: string,
-    options: ProfileOptions = {}
-): string {
+// The entire 'ProfileOptions' object is optional (= {})
+function createProfile(name: string, options: ProfileOptions = {}): string {
     const age = options.age ?? 18;
     const city = options.city ?? "Delhi";
 
@@ -184,13 +294,9 @@ console.log(createProfile("Keshav", { age: 25, city: "Mumbai" })); // Keshav, 25
 
 //======= Combining optional and default parameters ======
 
-function sendMessage(
-    message: string,
-    recipient?: string,
-    priority: string = "Normal"
-): string {
-    const to = recipient ?? "Everyone";
+function sendMessage(message: string, recipient?: string, priority: string = "Normal"): string {
 
+    const to = recipient ?? "Everyone";
     return `To: ${to} | Priority: ${priority} | Message: ${message}`;
 }
 
@@ -198,7 +304,7 @@ console.log(sendMessage("Hello"));
 // To: Everyone | Priority: Normal | Message: Hello
 
 console.log(sendMessage("Hello", "Amit"));
-// To: Rahul | Priority: Normal | Message: Hello
+// To: Amit | Priority: Normal | Message: Hello
 
 console.log(sendMessage("Hello", undefined, "High"));
 // To: Everyone | Priority: High | Message: Hello
@@ -218,7 +324,7 @@ a placeholder of 'undefined' if you want to set 'priority' without setting a 're
 
 */
 
-// ########## A common mistake: confusing ? with =  #############
+// ########## A common mistake: confusing '?' with '='  #############
 
 function exampleOne(name?: string): void {
     console.log(name);
@@ -236,6 +342,8 @@ exampleTwo(); // Guest
 ? means the caller may omit this argument.
 = means use this value when the argument is omitted or undefined.
 
+• ? (Optional): Means "this parameter can be omitted, and if so, its value is "undefined".
+• = (Default): Means "this parameter can be omitted, and if so, its value is "Guest".
 
 What to remember most
 ----------------------
@@ -254,16 +362,10 @@ What to remember most
 
 // WITHOUT REST PARAMETERS
 
-function addThreeNumbers(
-    a: number,
-    b: number,
-    c: number
-): number {
+function addThreeNumbers(a: number, b: number, c: number): number {
     return a + b + c;
 }
-
 console.log(addThreeNumbers(10, 20, 30)); // 60
-
 
 // WITH REST PARAMETERS
 
@@ -273,7 +375,6 @@ function addNumbers(...numbers: number[]): number {
     for (const number of numbers) {
         total += number;
     }
-
     return total;
 }
 
@@ -285,7 +386,6 @@ console.log(addNumbers());                 // 0
 /*
 ...numbers: number[]
 
-
 - ... identifies numbers as a rest parameter.
 - numbers is the parameter name.
 - number[] specifies that the collected arguments form an array of numbers.
@@ -296,10 +396,7 @@ console.log(addNumbers());                 // 0
 
 // You can use required parameters before the rest parameter.
 
-function introduce(
-    name: string,
-    ...hobbies: string[]
-): void {
+function introduce(name: string, ...hobbies: string[]): void {
     console.log(`My name is ${name}.`);
     console.log("My hobbies are:", hobbies);
 }

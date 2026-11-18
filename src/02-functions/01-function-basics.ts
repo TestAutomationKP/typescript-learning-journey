@@ -1,10 +1,10 @@
-// function declaration
+// ======== function declaration ==========
 
 // A function is a reusable block of code that performs a specific task. 
 // It can accept input, process that input, and optionally return a result.
 
 function addNumbers(): void{
-    console.log(10 +20);
+    console.log(10 + 20);
 }
 
 addNumbers(); // 30
@@ -14,7 +14,7 @@ function greet(): string{
     return "Hello, TypeScript";
 }
 
-console.log(greet());
+console.log(greet()); // Hello, TypeScript
 
 /*
 Here:
@@ -53,11 +53,17 @@ console.log(calculateTotal(600, 50));
 const total1 = calculateTotal(100, 3);
 const total2 = calculateTotal(250, 2);
 
-console.log(typeof(calculateTotal)); // function
-console.log(typeof(total1)); // number
+console.log(typeof calculateTotal); // function
+console.log(typeof total1); // number
 
 console.log(total1); // 300
 console.log(total2); // 500
+
+function greetingYou(name: string): void{
+    console.log(`Hello, ${name}`);
+}
+
+greetingYou("TypeScript"); // Hello, TypeScript
 
 /*
 Understand these terms:
@@ -72,39 +78,88 @@ A function can be called many times with different arguments.
 
 // ====== function declaration vs function expression ======
 
-// function declaration
+// ******* Function declaration (standalone function)
+// When you create a 'function with a name', that is a function declaration
 function subtract(a: number, b: number): number{
     return a - b;
 }
 
 console.log(subtract(23, 12)); // 11
 
-// Function expression - store a function inside a variable
+const sub = subtract(24, 12);
+console.log(sub); // 12
+
+// ******* Function expression - store a function inside a variable
+
+// The name may be omitted in function expressions, making that function “anonymous”.
+// Think of it like, const x = [function]
 // A 'function expression' happens when a function is assigned as a value to a variable (using const, let, or var).
 
-const multiply = function(a: number,b: number): number{
+const multiply = function(a: number, b: number): number{
     return a * b;
 };
 
-console.group(multiply); // [Function: multiply]. Note, the value is a function, it is NOT number (return type)
+console.log(multiply); // [Function: multiply]. // Note, this is the function itself, it is NOT number (return type)
 console.log(multiply(5, 7));
 console.log(multiply(15, 6));
 
-/*
-The main difference is how they are defined and initialized.
+const multiply_result = multiply(5, 7);
+console.log(multiply_result); // 35
 
-A 'function declaration' is generally available throughout its enclosing scope because of function hoisting. 
-A 'function expression' assigned to a const variable cannot be called before that variable is initialized.
+const greetY =  function(): void{
+    console.log("Hello");
+}
+
+console.log(greetY);   // function
+greetY();              // "Hello"
+console.log(greetY()); // undefined
+
+const greetMe = function(name: string): void{
+    console.log(`Hello, ${name}`);
+}
+
+console.log(greetMe); // function
+greetMe("JavaScript"); // Hello, JavaScript
+greetMe("TypeScript"); // Hello, TypeScript
+
+const greet_result = greetMe("JavaScript");
+console.log(greet_result) // undefined
+
+// Observe carefully : 
+// Here 'greet_result' stores the return value(i.e. void), which is undefined.
+// Do a mouse hover over 'greet_result', it will show like 'const greet_result: void'
+
+/*
+The main difference is 
+    - how they are defined and
+    - how they are initialized.
+
+- Function declaration: 
+
+        function doSomething(){
+        
+        }
+
+- Function expression:
+
+        const doSomething = function(){};
+
+A 'function declaration' is generally available throughout its enclosing scope because of 'function hoisting'. 
+A 'function expression', assigned to a const variable cannot be called before that variable is initialized.
+
+'Function declarations' are hoisted but 'function expressions' are not.
 */
 
-// Function declaration: available everywhere in scope
-
 /* 
-
 A function declaration is created using the 'function' keyword as a standalone statement. 
-Because the entire function definition is hoisted during the setup phase,you can invoke the function 
-before the line where it is written in your code. 
+Because the entire function definition is hoisted during the setup phase, you can invoke the function before the line 
+where it is written in your code. 
 
+console.log(subtract(12, 11)); // calling function before the line where it is written in the code
+
+function subtract(a: number, b: number): number{
+  return a - b;
+}
 */
 
 // Example: function declaration Hoisting
@@ -142,19 +197,19 @@ const multiResult = multiplyNumbers(5, 6);
 console.log(multiResult);
 
 console.log("====== counter ======")
-let count = 0;
 
 /* named function (or function declaration)
+let count = 0;
 
 function counter(): number{
     count++;
     return count;
 }
-
 */
 
-
 // function expression
+let count = 0;
+
 const counter = function(): number{
     count++;
     return count;
@@ -166,13 +221,62 @@ console.log(counter()); // 2
 console.log(counter()); // 3
 console.log(counter()); // 4
 
+/*
+When and where the function declaration and function expression needed?
+- Use function declarations when you want to create a function on the global scope and make it available throughout your code.
+- Function expressions are invoked to avoid polluting the global scope. 
+- Instead of your program being aware of many different functions, when you keep them anonymous, they are used and forgotten immediately.
+*/
+
 // ===== Anonymous Arrow function expression =======
 
 // Arrow functions provide a concise syntax using =>. They are widely used in modern TypeScript.
 
-const divideResult = (a: number, b: number): number => {
+/*
+1. function declaration (standalone function)
+
+function divide(a: number, b: number): number{
     return a / b;
 }
+
+or
+
+function divide(a: number, b: number){
+    return a / b;
+}
+
+2. function expression
+
+const divideResult = function(a: number, b: number): number{
+    return a / b;
+};
+
+or
+
+const divideResult = function(a: number, b: number){
+    return a / b;
+};
+
+*/
+
+const divideResult = (a: number, b: number): number => {
+    return a / b;
+};
+
+/*
+Can also be written as:
+
+const divideResult = (a: number, b: number) => {
+    return a / b;
+};
+
+or
+
+For a single expression, you can omit the braces and return keyword.
+
+const divideResult = (a: number, b: number) => a / b;
+
+*/
 
 // print the value that is stored in the variable
 console.log(divideResult); // [Function: divideResult]. means the value is a function
@@ -184,19 +288,19 @@ console.log(divideResult(8, 2)); // 4
 - a variable can store a function, and a function can be called using that variable's name
 - const declares a variable that cannot be reassigned.
 - divideResult is the variable's name. 
-- 'divideResult' is a constant variable that holds a function.
+- 'divideResult' is a constant variable that stores a function/function reference.
 - (a: number, b: number) defines the function's parameters.
 - => introduces the arrow function's body.
 - return a / b specifies what the function produces when called.
 */
 
-// storing a function and storing a result
+// storing a function vs storing return value of a function
 
-const a = divideResult;        // stores the function
-const b = divideResult(10, 2); // stores the result : 5
+const a = divideResult;         // stores the function reference
+const b = divideResult(10, 2);  // stores the return value of the function : 5
 
-console.log(a); // [Function: divideResult]
-console.log(b); // 5, print the result
+console.log(a);                 // [Function: divideResult]
+console.log(b);                 // 5, print the result
 
 // call the function with different arguments
 
@@ -214,14 +318,13 @@ function square(n: number): number{
     return n * n;
 }
 
-//Anonymous standard function expression
+// Anonymous standard function expression
 const square = function(n: number): number{
     return n * n;
 }
 
-// Why is it called an anonymous function?
-
-// Because the function doesn't have its own name.
+Question: Why is it called an anonymous function?
+Answer: Because the function doesn't have its own name.
 
 */
 
@@ -231,7 +334,7 @@ console.log("===== Arrow Function Expression =====");
 const square = (n: number): number => n * n;
 console.log(square(6));
 
-
+// Another example
 let anothercounter: number = 0;
 const increment = (): void => {
     anothercounter++;
@@ -248,9 +351,13 @@ increment(); // 3
 // Arrow functions with one or zero parameters
 
 const greetYou = (name: string): string => `Hello, ${name}`;
+//const greetYou = (name: string) => `Hello, ${name}`;
 const getVersion = (): string => "1.0.3";
+//const getVersion = () => "1.0.3";
 const getCurrentYear = (): number => new Date().getFullYear();
-const double = (n: number): number => n *  2;
+//const getCurrentYear = () => new Date().getFullYear();
+const double = (n: number): number => n * 2;
+//const double = (n: number) => n * 2;
 
 console.log(greetYou("TypeScript")); // Hello, TypeScript
 console.log(getVersion()); // 1.0.3
@@ -266,11 +373,15 @@ Here:
 - a + b is evaluated and returned automatically because the body is a single expression without curly braces. 
 */
 
+// function expression
 const add_v2 = function(a: number, b: number) {
     return a + b;
 };
 
 console.log(add_v2(10, 5)); // 15
+
+const addValue = add_v2;
+console.log(addValue(12, 13)); // 25
 
 /*
 
@@ -283,8 +394,11 @@ Here:
 */
 
 // ===== Scope in function ========
+
 console.log("===== Scope in function =====")
+
 // scope determines where a variable can be accessed
+
 /*
 Block scope: A variable is accessible only inside the { } block in which it is declared.
 
@@ -366,8 +480,8 @@ testScopeAnother(); // 0 1 2 3
 
 // improved version for modern TypeScript
 
-// const is generally preferable to let in modern TypeScript when a variable does not need to be reassigned. 
-// Use let when reassignment is necessary.
+// 'const' is generally preferable to 'let' in modern TypeScript when a variable does not need to be reassigned. 
+// Use 'let' when reassignment is necessary.
 
 function checkAgeSecond(): void {
     const myage2 = 20;
@@ -381,12 +495,27 @@ function checkAgeSecond(): void {
     console.log(urStatus2); // Adult
 }
 
-checkAgeSecond()
+checkAgeSecond();
 
 
 // ====== Function closure =======
 console.log("===== Function closure =====")
-// A closure is a function together with access to the variables from its surrounding lexical scope.
+/*
+What are Closures?
+
+At its core, a closure is a function that has access to the parent scope, even after the parent function has closed.
+This means that closure can remember and access variables from an outer function even after that function has finished its execution.
+
+Behind the Scenes: 
+
+When a function is defined, it gets a hidden property called [[Environment]] that 
+references its lexical environment — the environment where the function was created.
+
+This environment contains all local variables as records.
+
+When we invoke a closure, it retains access to its parent function’s variables through this [[Environment]] property.
+This is why even after the parent function completes its execution, the closure still has access to the parent function’s variables.
+*/
 
 // Let's consider this code ( function call inside function)
 
@@ -404,7 +533,7 @@ function outerFunction(): void{
 // call the function
 outerFunction();
 
-// innerFunction() can access 'message' because it is declared in the surrounding scope
+// innerFunction() can access 'message' because it is declared in the surrounding scope (the lexical environment)
 
 // Anther example
 
@@ -416,7 +545,7 @@ function outerCounter(): number{
         return count;
     }
 
-    // it calls inner function (innerCounter) and returns its result 1 (return type : number)
+    // Observe carefully:  it calls inner function (innerCounter) and returns its result 1 (return type : number)
     return innerCounter();
 }
 
@@ -436,6 +565,7 @@ console.log(countOne); // 1
 
 console.log("==== function closure using 'named function' =====");
 
+// Observe the retun type of the function 'outerCounter1'. Its a function (() => number)
 function outerCounter1(): () => number{
     let count = 0;
 
@@ -479,7 +609,9 @@ function outerCounter_one(): () => number{
      };
 }
 
-/* (): () => number 
+/* 
+
+(): () => number 
 
 It means The outer function(outerCounter_one) takes no arguments and 
 returns a function that takes no arguments and returns a number.
@@ -506,13 +638,18 @@ console.log(countTwo_2()); // 2
 
 console.log(countOne_2()); // 4
 
-
 // Improvised version of above code using 'Arrow function expression'
 console.log("==== function closure using 'Arrow function expression' =====");
 function outerCounter_two(): () => number{
     let count = 0;
 
-    return (): number => ++count;
+    /*
+    return (): number => {
+        count++;
+        return count;
+    }
+    */
+    return () => ++count;
     // try with 'count++' and observe what happens
 }
 
@@ -531,3 +668,88 @@ console.log(countTwo_3()); // 1
 console.log(countTwo_3()); // 2
 
 console.log(countOne_3()); // 4
+
+/*
+1. ++count (Pre-increment): 
+   Increments the value of count by 1 first, and then returns the new value within the expression.
+2. count++ (Post-increment): 
+   Evaluates or returns the original value first, and then increments count by 1.
+
+• ++x (Pre-increment): Do x = x + 1 first, then give back the new value of x.
+• x++ (Post-increment): Give back the current (old) value of x first, then do x = x + 1 immediately afterward.
+
+ts
+let a = 1;
+let b = ++a; // a is 2, b is 2 (pre-increment)
+
+let x = 1;
+let y = x++; // x is 2, y is 1 (post-increment, old value 1 assigned to y first)
+*/
+
+// Anther example: Discount Calculator Closure
+/*
+
+Let's make a closure where:
+- the outer function creates some private state (discount)
+- the inner function has 2 parameters (price and quantity)
+- the inner function has an explicit return type (number)
+- the inner function remembers/accesses the outer variable (discount)
+
+*/
+
+// Using function declaration (named function)
+
+function createDiscountCalculatorV1(discount: number): (price: number, quantity: number) => number {
+    
+    function priceCalculator(price: number, quantity: number): number{
+        return price * quantity * (1 - discount);
+    }
+    return priceCalculator;
+}
+
+const value = createDiscountCalculatorV1(0.2);
+console.log(value(50, 10));
+console.log(value(200, 5));
+console.log(value(500, 5));
+
+/*
+- Outer function's return type:
+  'createDiscountCalculator' returns a function that accepts two numbers and returns a number.
+- Inner function (priceCalculator) has two arguments : price: number and quantity: number and return type is 'number'
+- Where is the closure?
+  : 'discount' belongs to the outer function.
+  : 'price and quantity' belong to the inner function.
+  : The inner function remembers 'discount' even after the outer function has finished. That is the closure !!!
+*/
+
+console.log("===============");
+
+// Using function expression
+
+function createDiscountCalculatorV2(discount: number): (price: number, quantity: number) => number {
+
+    return function(price: number, quantity: number): number{
+        return price * quantity * (1 - discount);
+    };
+
+}
+
+const value2 = createDiscountCalculatorV2(0.2);
+console.log(value2(50, 10));
+console.log(value2(200, 5));
+console.log(value2(500, 5));
+
+console.log("===============");
+
+// Using Arrow expression
+
+function createDiscountCalculatorV3(discount: number): (price: number, quantity: number) => number {
+
+    return (price: number, quantity: number) => price * quantity * (1 - discount);
+
+}
+
+const value3 = createDiscountCalculatorV3(0.2);
+console.log(value3(50, 10));
+console.log(value3(200, 5));
+console.log(value3(500, 5));

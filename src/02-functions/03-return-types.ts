@@ -12,11 +12,10 @@ function sum(a: number, b: number): number{
 console.log(sum(12, 13));
 
 const result = sum(20, 30);
-console.log(result);
-
+console.log(result); // 50
 
 /**
-- add is the function name.
+- 'sum' is the function name.
 - a and b are parameters of type number.
 - The ': number' after the closing parenthesis specifies the 'return' type.
 - The 'return' statement sends the result back to the caller.
@@ -25,8 +24,7 @@ console.log(result);
 
 // === Explicit return type vs inferred return types ====
 
-// TypeScript can determine the return type automatically from the function's implementation. 
-// This is called type inference.
+// TypeScript can determine the return type automatically from the function's implementation. This is called type inference.
 
 // explicit return type : explicitly declare that the function returns a number.
 
@@ -54,13 +52,17 @@ function greet(name: string): void{
 }
 
 greet("KP");
+const a = greet("Alex");
+console.log(a); // "Hello, Alex" // undefined
 
+/*
 function subtract(a: number, b: number): number{
     return a - b;
 }
 
 const subResult = subtract(23, 12);
 console.log(subResult); // 11
+*/
 
 function printSubtract(a: number, b: number): void{
     console.log(a - b);
@@ -68,13 +70,15 @@ function printSubtract(a: number, b: number): void{
 
 printSubtract(23, 12); // 11
 const result_1 = printSubtract(23, 12);
+// console.log(typeof result_1); // undefined
 console.log(result_1); // 11 and also undefined
 
 /*
 - both examples produce the number 11 on the console, their behavior differs:
 - subtract() returns 11, allowing the caller to store or reuse it.
-- printSubtract() prints 11 itself; it doesn't return that number.
-- For a void function, the returned value at runtime is normally 'undefined' if no value is returned.
+- printSubtract() prints 11 itself; it doesn't have return type, still we are trying to store it in result_1.
+  so, the type of 'result_1' became 'void' during compile time i.e. const result_1: void. 
+- IMPORTANT : For a 'void' function, the returned value(i.e. void) at runtime is normally 'undefined'.
  */
 
 // === The 'never' return type ===
@@ -107,11 +111,11 @@ function getUserId(isGuest: boolean): number | string {
 const guestID: number | string = getUserId(true);
 console.log(guestID); // GUEST-101
 
-const guestID_1 = getUserId(false); // const guestID_1: number | string
+const guestID_1 = getUserId(false); // TS infers as const guestID_1: number | string
 console.log(guestID_1); // 101
 
 function getValue(choice: boolean): number | string{
-    return choice? 100 : "One hundred";
+    return choice ? 100 : "One hundred";
 }
 
 console.log(getValue(true));
@@ -167,7 +171,7 @@ interface User {
     id: number;
     name: string;
     isActive: boolean;
-};
+}
 
 */
 
@@ -185,16 +189,15 @@ console.log(getScore()[1]); // 34
 console.log(getScore()[2]); // 67
 console.log(getScore()[3]); // 38
 console.log(getScore()[4]); // 85
+console.log(getScore()[5]); // undefined. Because there is no element in index: 5
 
 const score = getScore();
-
 console.log(score);    // [ 12, 34, 67, 38, 85 ]
 console.log(score[0]);
 console.log(score[1]);
 console.log(score[2]);
 console.log(score[3]);
 console.log(score[4]);
-
 
 function getNames(): string[]{
     return ["KP", "JP", "SP"];
@@ -219,14 +222,18 @@ console.log(namelist[2]);
 function getPerson(): [string, number]{
     return ["KP", 100];
 }
+// The return type : [string, number] means the first element is a string and the second is a number.
 
+// const person: [string, number] = getPerson(); // explicitly specify the variable type as a tuple of [string, number]
 const person = getPerson();
-
 console.log(typeof(person)); // object
 console.log(person[0]);      // KP
 console.log(person[1]);      // 100
 
-// The return type : [string, number] means the first element is a string and the second is a number.
+// Callers can cleanly destructure the returned tuple
+const [pName, pAge] = getPerson();
+console.log(pName); // KP
+console.log(pAge);  // 100
 
 function getStudent(): [string, number, boolean]{
     return ["KP", 13, true];
@@ -240,6 +247,20 @@ console.log(`Is Present?: ${student[2]}`); // Is Present?: true
 
 // Use an array (for example, number[]) when the values are a collection of similar items. 
 // Use a tuple(like [string, number, boolean]) when each position has a specific meaning and type.
+
+// Callers can cleanly destructure the returned tuple
+const [sName, sAge, sPresent] = getStudent();
+console.log(sName);     // KP
+console.log(sAge);      // 13
+console.log(sPresent);  // true
+
+/*
+Suggestion: 
+When to Use Objects Instead !!!: Tuples work best for two or three closely related values 
+that callers will immediately destructure. If you are returning four or more values, 
+then returning an 'object' with named properties is usually easier to maintain.
+*/
+
 
 // === Functions that return promises ===
 

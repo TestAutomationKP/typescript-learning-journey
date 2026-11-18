@@ -9,8 +9,7 @@ function functionName(parameter: Type): ReturnType {
 }
 
 */
-// - parameters are number
-// - return type - number
+// - parameters are number and return type is number
 
 function calculateArea( width: number, length: number): number{
     return width * length
@@ -21,18 +20,14 @@ console.log(calculateArea(5, 6));
 
 // combination of different parameter type
 
-function printDetails(
-    name: string, 
-    age: number, 
-    isActive: boolean
-): void{
+function printDetails(name: string, age: number, isActive: boolean): void{
     console.log(name, age, isActive);
 }
 
 printDetails("KP", 10, true);
 
 // printDetails(20, "Alex", false); // Error: Argument of type 'number' is not assignable to parameter of type 'string'
-// printDetails(true, "20", 10); // Error
+// printDetails(true, "20", 10);    // Error
 
 // NOTE: Required arguments are matched to parameters by position.
 
@@ -46,7 +41,7 @@ console.log(userInfo("KP", 10));
 
 // ===== union types in parameters ====
 
-//A union type allows a parameter to accept more than one specified type. The '|' symbol means “or.”
+//A union type allows a parameter to accept more than one specified type. The '|' symbol means “or”
 
 function printId(id: string | number): void{
     console.log(`ID : ${id}`);
@@ -55,6 +50,23 @@ function printId(id: string | number): void{
 // The function accepts either a string or a number.
 printId(101);       // ID : 101
 printId("IND-101"); // ID : IND-101
+
+function userInfoV1(name: string | undefined = undefined): string{
+  return `${name ?? "Guest User"}`;
+}
+
+console.log(userInfoV1()); // Guest User
+console.log(userInfoV1("Admin")); // Admin
+// function userInfoV1(name: string | undefined = undefined): string means function userInfoV1(name?: string | undefined): string
+
+// optional parameter
+function userInfoV2(name?: string): string{
+  return `${name ?? "Guest"}`;
+}
+
+console.log(userInfoV2()); // Guest
+console.log(userInfoV2("KP")); // KP
+// function userInfoV2(name?: string): string means function userInfoV2(name?: string | undefined): string
 
 // ====== using type narrowing ======
 /*
@@ -65,14 +77,15 @@ You need to check the actual type before using type-specific operations.
 
 function formatID(id: string | number): string{
 
-    if(typeof(id) === "number"){
+    if(typeof id === "number"){
         return `ID-${id.toString().padStart(4, "0")}`;
     }
+
    return id.toUpperCase();
 }
 
 console.log(formatID(42));  // ID-0042
-console.log(formatID("IND-123")); // IND-123
+console.log(formatID("ID-123")); // IND-123
 
 // The 'typeof' check tells TypeScript which type is currently being handled.
 
@@ -104,6 +117,7 @@ function createUser(name: string, age: number, email: string, isActive: boolean)
 }
 
 createUser("KP", 10, "kp@abc.com", true);
+//createUser(10, "Alex", false, "kp@alex.com"); // Error. Carefull !!! Order of Arguments matter.
 
 // The disadvantage: 
 // If you have many arguments, it's easy to forget their order or accidentally swap values of the same type.
@@ -144,7 +158,7 @@ createUserOne({
 
 // ===== Using 'type' keyword to define the structure of an object =====
 
-// Define the type
+// Define the object structure/type
 type User = {
     name: string;
     age: number;
@@ -160,10 +174,13 @@ function createUserTwo(user: User) : void{
     console.log(`Active: ${user.isActive}`);
 }
 
-// The parameter 'user: User' tells TypeScript that the function expects an object matching the 'User' type.
+// IMPORTANT NOTE:
+// The parameter 'user: User' tells TypeScript that the function expects an object which is matching the 'User' type.
+// It means,
+// It doesn't say: "You must have been created using 'User'."
+// It says: "Give me an object whose structure matches 'User'."
 
-
-// declare an object using the type
+// declare an object of type 'User' (explicitly we have specified the type as 'User')
 const newUser: User = {
     name: "KP",
     age: 10,
@@ -174,7 +191,23 @@ const newUser: User = {
 // pass it to the function
 createUserTwo(newUser);
 
-// Another approach using an interface
+// create an object (observe cafefully !!! we didn't specify the object type as 'User' and the object has an extra property 'country')
+const newUserTwo = {
+    name: "Alex",
+    age: 20,
+    email: "alex@abc.com",
+    isActive: true,
+    country: "India"
+}
+
+// pass it to the function
+createUserTwo(newUserTwo);
+
+// NOTE: TypeScript looks at the object 'newUserTwo' and says: it has name, age, email, and isActive with the correct types which is required.
+// That means: "A type is compatible if its structure is compatible."
+// This is called 'structural typing'
+
+// ======= Another approach using an interface =======
 
 // Describe the object structure
 interface UserInfo {
@@ -191,7 +224,7 @@ function userDisplay(user: UserInfo): void{
     console.log(`Active: ${user.isActive}`);
 }
 
-// declare an object
+// declare an object of type 'UserInfo'
 const anotherUser: UserInfo = {
     name: "Smith",
     age: 10,
@@ -206,13 +239,13 @@ userDisplay(anotherUser);
 interface UserOption{
     name: string;
     age: number;
-    city?: string;
+    email?: string;       // optional property (string | undefined)
 }
 
 function displayUser(user: UserOption): void{
-    console.log(user.name);
-    console.log(user.age);
-    console.log(user.city ?? "City not provided");
+    console.log(`Name: ${user.name}`);
+    console.log(`Age: ${user.age}`);
+    console.log(`Email ID: ${user.email ?? "NOT provided"}`);
 }
 
 const userThree = {
@@ -220,7 +253,10 @@ const userThree = {
     age: 25
 };
 
-displayUser(userThree); // Hari 25 city not provided
+displayUser(userThree); 
+// Name: Hari
+// Age: 25
+// Email ID: NOT provided
 
 /*
 - Object parameters are particularly useful when you want optional properties.
@@ -246,25 +282,33 @@ function greet(name?: string): string {
 console.log(greet("Rajeev")); // Hello, Rajeev!
 console.log(greet());        // Hello, guest!
 
-/*
+/* Using ?? inside a function
 
+function greet(name?: string): string {
+  const finalName = name ?? "Guest";
+
+  return `Hello, ${finalName}`;
+}
+
+console.log(greet("Alex"));
+console.log(greet());
+
+*/
+
+/*
 - An optional parameter is marked with a question mark (?).
 - The ? means the caller is allowed to leave out the argument.
 - If the caller omits it, the parameter's value is undefined.
 
-- if (name !== undefined) : If a name was supplied, the function uses it. Otherwise, it returns the guest greeting.
+- if (name !== undefined) : If a name is supplied, the function uses it. Otherwise, it returns the guest greeting.
 - Inside this function, 'name' can be a string or undefined. It is like,
-  function greet(name?: string | undefined): string
-
+(IMPORTANT NOTE) function greet(name?: string): string  = function greet(name?: string | undefined): string
 */
 
 // ======== Optional parameters with multiple arguments ========
 // Imagine a function that formats a person's full name.
 
-function getFullName(
-    firstName: string,
-    lastName?: string
-    ): string {
+function getFullName(firstName: string, lastName?: string): string {
 
     if (lastName !== undefined) {
         return `${firstName} ${lastName}`;
@@ -288,15 +332,15 @@ function getFullName_V2(
 
 console.log(getFullName_V2("Shiv", "Kumar"));   // Shiv Kumar
 console.log(getFullName_V2("Rahul"));           // Rahul
+console.log(getFullName_V2("Nakul", undefined));// Nakul
 
 
 // TypeScript understands that lastName can be either:
 // - A string, such as "Kumar".
-// - undefined, when the argument is omitted or explicitly passed as undefined.
+// - OR 'undefined', when the argument is omitted or explicitly passed as 'undefined'.
 
 
 // Rule: Put required parameters before optional parameters.
-
 
 // ======= What if an optional argument is in the middle? ======
 
@@ -314,7 +358,7 @@ console.log(describePerson("Amitabh", "Amit", "Delhi"));    // Amitabh (Amit) li
 console.log(describePerson("Rajeev", undefined, "Mumbai")); // Rajeev (no nickname) lives in Mumbai.
 
 
-// ======= real difference: ? versus | undefined ====
+// ======= real difference: '?' versus '| undefined' ====
 
 // Version A — Optional parameter
 
@@ -343,7 +387,7 @@ greetB(undefined);  // Valid
 
 Remember this simple rule
 - ? controls whether the argument or property can be omitted.
-- '| undefined' controls whether the value can be undefined.
+- '| undefined' controls whether the value can also be 'undefined'.
 - Hovering over an optional parameter shows 'string | undefined' because the parameter's value might be missing.
 
 */
@@ -413,6 +457,18 @@ Keyboard: ₹ 800
 Mouse: ₹ 500
 */
 
+// Destructuring the [key, value] tuple inside a callback
+products.forEach((value, key) => {
+  console.log(`${key}: ${value}`);
+});
+
+/*
+Laptop: ₹ 15000
+Mobile: ₹ 7000
+Keyboard: ₹ 800
+Mouse: ₹ 500
+*/
+
 // ===== Array Parameters =======
 
 // You can pass an array to a function by specifying the element type.
@@ -446,14 +502,22 @@ To KP: Now the order is on the way
 Note: A rest parameter must be the last parameter in the function definition.
 */
 
-//====== Function Types and callbacks
+//====== Function Types and callbacks=======
+
+// In TypeScript, function types define the exact parameter types and return type a function must have, 
+// using the arrow syntax (param: Type) => ReturnType.
+
+
+// 1. Defining a Function Type
+// You can define a function type inline or create a reusable 'type' alias
+
 type Calculator = (a: number, b: number) => number;
 // Calculator means: A function that accepts two numbers and returns a number.
 
-const add: Calculator = (a: number, b: number) => a + b;
-// This tells TypeScript that add must contain a function matching the Calculator type.
-// That means it must accept two numbers and return a number.
 
+const add: Calculator = (a: number, b: number) => a + b;
+// This tells TypeScript that 'add' must contain a function matching the 'Calculator' type.
+// That means it must accept two numbers and return a number.
 const sub: Calculator = (a: number, b: number) => a - b;
 const mul: Calculator = (a: number, b: number) => a * b;
 const div: Calculator = (a: number, b: number) => a / b;
@@ -463,7 +527,7 @@ const add: Calculator = (a: number, b: number) => a + b;
 can be written as
 const add: Calculator = (a, b) => a + b;
 
-(You don't need to write : number after a and b in this example 
+(You don't need to write ': number' after a and b in this example 
 because TypeScript infers their types from the Calculator annotation)
 
 
@@ -499,13 +563,61 @@ function execute(
 console.log(execute(10, 5, add)); // 15
 console.log(execute(12, 3, mul)); // 36
 
+// Here, a function accepts another function as an argument (a callback), 
+// operation: Calculator
+// operation is the parameter
+// Calculator is a function type
+
 /*
-- A callback is a function passed to another function so that the receiving function can call it 
-- The parameter 'operation' receives the callback. add/sub/mul/div is the callback function being 
-  passed to execute().
+- A callback is a function passed to another function as an arument so that the receiving function can call it 
+- The parameter 'operation' receives the callback. add/sub/mul/div is the callback function being passed to execute().
 
 When execute() runs this line:
-return operation(a, b);
+    return operation(a, b);
 
 it invokes that callback.
 */
+
+/*
+Callbacks:
+----------
+
+A function passed to another function as an argument is often referred to as a “callback” in JavaScript. Here’s an example:
+
+function mapAction(item) {
+  // do stuff to an item
+}
+
+array.map(mapAction)
+
+The problem here is that function 'mapAction' will be available to your entire application — there’s no need for that. 
+If that callback is a function expression, it will not be available outside of the function that uses it:
+
+array.map(item => { //do stuff to an item })
+
+or
+
+const mapAction = function(item) {
+  // do stuff to an item
+}
+
+array.map(mapAction)
+
+'mapAction' will be available to code below its initialization.
+
+*/
+
+// Example: When a function accepts another function as an argument (a callback), apply the function type directly to that parameter.
+
+// Inline callback type
+function processUserInput(
+  name: string, 
+  callback: (formattedName: string) => void): void {
+        const cleaned = name.trim().toUpperCase();
+        callback(cleaned);
+}
+
+// Usage
+processUserInput("  alice  ", (result) => {
+  console.log(`Hello, ${result}!`); // TypeScript knows 'result' is a string
+});
